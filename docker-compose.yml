@@ -1,0 +1,34 @@
+services:
+  postgresdb:
+    image: postgres:latest
+    container_name: postgresdb
+    networks:
+      bat-network:
+        aliases:
+        - postgresdb
+    environment:
+      POSTGRES_USER: apache
+      POSTGRES_PASSWORD: bats
+      POSTGRES_DB: bats
+  batapp:
+    build: .
+    container_name: batapp
+    networks:
+      bat-network:
+        aliases:
+        - batapp
+    environment:
+      POSTGRES_USER: apache
+      POSTGRES_PASSWORD: bats
+      POSTGRES_DB: bats
+    volumes:
+      - ./django:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - "postgresdb"
+
+networks:
+  bat-network:
+    name: bat-network
+    driver: bridge
